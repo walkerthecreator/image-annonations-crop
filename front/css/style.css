@@ -1,0 +1,34 @@
+/* Use this font-face with your font files but leave the name to change the font
+@font-face {
+    font-family: 'annotatorFont';
+}*/
+
+.font-test {
+    font-family: 'annotatorFont', sans-serif;
+    font-size: 32px;
+}
+
+.annotated-image-wrapper {
+    position: relative;
+    font-family: 'clearSansBold', sans-serif;
+    overflow: hidden;
+}
+
+.annotated-image {
+    position: absolute;
+    z-index: 1;
+}
+
+.live-canvas {
+    z-index: 5;
+    position: relative;
+}
+
+.annotation-text {
+    background: lightblue;
+    margin-left: 0;
+    padding-left: 30px;
+    margin-top: -8px;
+    padding-top: 20px;
+    padding-bottom: 26px;
+}
