@@ -50,11 +50,12 @@ fabric.TextStandalone = fabric.util.createClass(fabric.IText, {
         this.set('lockRotation', true);
         this.set('hasRotatingPoint', false);
         this.set('fontFamily', 'clearSansBold');
-        this.set('fontSize', 16);
+        this.set('fontSize', 20);
         this.set('fontWeight', 'bold');
         this.set('originX', 'center');
         this.set('originY', 'center');
         this.set('padding', 10);
+        this.set('isCircle' , options.isCircle || false )
 
         this.on('editing:entered', function(options) {
             this.selectAll();
@@ -68,34 +69,43 @@ fabric.TextStandalone = fabric.util.createClass(fabric.IText, {
             id : this.get('id'),
             rect : this.get('rect')
         });
-    },
+    }, 
 
     _renderTextBoxBackground: function(ctx) {
         if (!this.backgroundColor) {
             return;
         }
-
         ctx.fillStyle = this.backgroundColor;
 
-        ctx.fillRect(
-            this._getLeftOffset()-10,
-            this._getTopOffset()-10,
-            this.width + 20,
-            this.height + 20
-        );
+        if(this.isCircle){
+            ctx.strokeStyle = `${color}`;
+            ctx.fillStyle = this.backgroundColor;
+            ctx.beginPath();
+            ctx.roundRect(this._getLeftOffset() - 20, this._getTopOffset() - 15  , 50, 50, 80);
+            ctx.stroke();
+            ctx.fill();
+            ctx.lineWidth = 3;
+        }
+        else{
+            ctx.fillRect(
+                    this._getLeftOffset()-10,
+                    this._getTopOffset()-10,
+                    this.width + 20,
+                    this.height + 20 ,
+                );
 
-        ctx.strokeStyle = `${color}`;
-        ctx.lineWidth = 3;
+                ctx.strokeStyle = `${color}`
+                ctx.lineWidth = 3
 
-        ctx.strokeRect(
-            this._getLeftOffset()-10,
-            this._getTopOffset()-10,
-            this.width + 20,
-            this.height + 20
-        );
+            ctx.strokeRect(
+                    this._getLeftOffset()-10,
+                    this._getTopOffset()-10,
+                    this.width + 20,
+                    this.height + 20
+                );
 
-        // if there is background color no other shadows
-        // should be casted
+        }
+
         this._removeShadow(ctx);
     },
 });
@@ -209,6 +219,7 @@ jQuery(document).ready(function($) {
         currentCanvas.add(rectangle);
 
         currentCanvas.on('mouse:move', function (option) {
+            // console.log("moving")
             var e = option.e;
 
             if(shifted){
@@ -238,6 +249,7 @@ jQuery(document).ready(function($) {
         var ellipse, isDown, origX, origY;
 
         isDown = true;
+
         var pointer = canvas.getPointer(o.e);
         origX = pointer.x;
         origY = pointer.y;
@@ -257,11 +269,13 @@ jQuery(document).ready(function($) {
             hasBorders: true,
             hasControls: true,
             lockRotation: rotationLocked,
-            hasRotatingPoint: hasRotationPoint
+            hasRotatingPoint: hasRotationPoint ,
+            zIndex : 1
         });
         canvas.add(ellipse);
-
+        
         canvas.on('mouse:move', function(o){
+
             if (!isDown) return;
 
             var pointer = canvas.getPointer(o.e);
@@ -303,10 +317,53 @@ jQuery(document).ready(function($) {
         });
     }
 
-    /*
-      This was taken over by the ellipse function but I'm leaving
-      it in here in case a click to add circle is needed later.
-     */
+    function drawEllipse2(canvas , o){
+        var ellipse, isDown, origX, origY;
+
+        isDown = true;
+
+        var pointer = canvas.getPointer(o.e);
+        origX = pointer.x;
+        origY = pointer.y;
+        ellipse = new fabric.Circle({
+            left: origX,
+            top: origY,
+            originX: 'left',
+            originY: 'top',
+            fill: '',
+            stroke:`${color}`,
+            strokeWidth:3,
+            selectable: true,
+            hasBorders: true,
+            hasControls: true,
+            lockRotation: rotationLocked,
+            hasRotatingPoint: hasRotationPoint ,
+            zIndex : 1
+        });
+        canvas.add(ellipse);
+        
+        canvas.on('mouse:move', function(o){
+
+            if (!isDown) return;
+
+                var e = o.e;
+                ellipse.set('radius', Math.abs((e.offsetX - origX)/2));
+                if((e.offsetX - origX)/2 < 0) {
+                    ellipse.set('top', Math.abs((e.offsetY)));
+                    ellipse.set('left', Math.abs((e.offsetX)));
+                }
+                ellipse.setCoords();
+                canvas.renderAll();
+
+        });
+
+        canvas.on('mouse:up', function(o){
+            isDown = false;
+            ellipse.setCoords();
+            canvas.renderAll();
+        });
+    }
+   
 
     function drawCircle(startY, startX, currentCanvas) {
 
@@ -317,14 +374,14 @@ jQuery(document).ready(function($) {
             width : 0,
             height : 0,
             radius: 0,
-            stroke: `${stroke}`,
-            strokewidth: 3,
+            stroke: `${color}`,
+            strokewidth: 5,
             lockRotation: rotationLocked,
             hasRotatingPoint: hasRotationPoint
         });
 
         currentCanvas.add(circle);
-
+        
         currentCanvas.on('mouse:move', function (option) {
             var e = option.e;
             circle.set('radius', Math.abs((e.offsetX - startX)/2));
@@ -344,6 +401,45 @@ jQuery(document).ready(function($) {
         });
     }
 
+    function drawIcon(canvas , index){
+        
+        // canvas.get 
+        let top = 0 
+        let canvasHeight = canvas.getHeight()
+        let canvasWidth = (Math.round(canvas.getWidth() / 8) * 7) - 10 
+        let url ;
+
+        if(index === 0 ){
+            url = my_plugin_vars.icon1;
+        }
+        else if(index === 1){
+            url = my_plugin_vars.icon2;
+            top = Math.round(canvas.getHeight() / 8) * 0.5 + 40
+        }
+        else if(index === 2){
+            url = my_plugin_vars.icon3;
+            top = canvasHeight / 3
+            top = Math.round(canvas.getHeight() / 8) * 1 + 80
+        }
+        else{
+            url = my_plugin_vars.icon4;
+            top = canvasHeight / 2
+            top = Math.round((canvas.getHeight() / 8) * 1.5 ) + 120
+        }
+        console.log(canvasWidth)
+        console.log(Math.round((canvasWidth /8 ) * 7) + 40 )
+        const img = new fabric.Image.fromURL( url , function(img){
+            img.set({
+                left : canvasWidth ,
+                top : top  ,
+                scaleX : 0.4 ,
+                scaleY : 0.4  
+            })
+            canvas.add(img);
+            canvas.renderAll()
+        } )
+    }
+
     //This draws the speech bubble
     function drawSpeechBubble(canvas) {
 
@@ -354,12 +450,14 @@ jQuery(document).ready(function($) {
 
         canvas.add(group);
 
-        var rect = makeRect(135, 125, groupID);
+        //This makes the tiny black rectangle used to drag the pointer
+        var rect = makeRect(135, 125, groupID); 
         canvas.add(rect);
 
-        var p1 = {x: group.getCenterPoint().x-10, y: group.getCenterPoint().y},
-            p2 = {x: group.getCenterPoint().x+10, y: group.getCenterPoint().y},
-            p3 = {x: rect.getCenterPoint().x, y: rect.getCenterPoint().y};
+        var p1 = {x: group.getCenterPoint().x-10 , y: group.getCenterPoint().y},
+            p2 = {x: group.getCenterPoint().x+10 , y: group.getCenterPoint().y},
+            p3 = {x: rect.getCenterPoint().x , y: rect.getCenterPoint().y};
+
         var shape = makePolygon(p1, p2, p3, canvas);
 
         canvas.add(shape);
@@ -419,6 +517,8 @@ jQuery(document).ready(function($) {
         }
     }
 
+ 
+
     //Gets a FabricJS item by its custom set ID
     function getItemById(id, type, canvas) {
         var allObjects = canvas.getObjects(type);
@@ -440,7 +540,7 @@ jQuery(document).ready(function($) {
         canvas.remove(deleteFirst);
 
         var shape = new fabric.PolygonTwo([point1, point2, point3], {
-            fill: 'red',
+            fill: `${color}`,
             hasControls: false,
             lockRotation: true,
             selection: false,
@@ -491,6 +591,87 @@ jQuery(document).ready(function($) {
         });
     }
 
+    function drawCircleWithArrow(canvas){
+        // function drawSpeechBubble(canvas) {
+
+        //Generates a random number between 1 and this huge number to use as IDs, might not be as fool proof as double checking to make sure they haven't been used but much better for performance and guessing no more than 10 or 20 objects top at a time it seems like a better idea
+        var groupID = Math.floor((Math.random() * 100000000000) + 1).toString();
+
+        var group = addTextToRect(null, groupID);
+
+        canvas.add(group);
+
+        //This makes the tiny black rectangle used to drag the pointer
+        var rect = makeRect(135, 125, groupID);
+        canvas.add(rect);
+
+        var p1 = {x: group.getCenterPoint().x-10 , y: group.getCenterPoint().y},
+            p2 = {x: group.getCenterPoint().x+10 , y: group.getCenterPoint().y},
+            p3 = {x: rect.getCenterPoint().x , y: rect.getCenterPoint().y};
+
+        var shape = makePolygon(p1, p2, p3, canvas);
+
+        canvas.add(shape);
+        shape.sendToBack();
+
+        group.shape = shape;
+        group.rect = rect;
+
+        canvas.renderAll();
+
+        //This makes the tiny black rectangle used to drag the pointer
+        function makeRect(left, top, objectID) {
+
+            var block = new fabric.RectangleToDrag({
+                left: left,
+                top: top,
+                width: 5,
+                height: 5,
+                // fill: 'rgb(127, 140, 141)',
+                fill: 'black',
+                originX: 'left',
+                originY: 'top',
+                centeredRotation: true,
+                lockScalingX: false,
+                lockScalingY: false,
+                lockRotation: true,
+                hasControls: false,
+                cornerSize: 0,
+                hasBorders: false,
+                padding: 0,
+                id: objectID
+            });
+            return block;
+        }
+
+        function addTextToRect(block, id) {
+            // annotator button
+            var rectText = new fabric.TextStandalone(`${++counter}`, {
+                left: 100, //Take the block's position
+                top: 50,
+                fill: `${color}`,
+                fontSize: 20,
+                fontFamily: 'clearSansBold',
+                fontWeight: 'bold',
+                name: 'text1',
+                backgroundColor: '#fff',
+                id: id,
+                // rx: 20 ,
+                // ry : 20 ,
+                cornerSize : 20 , 
+                name: 'draggable',
+                lockRotation: true,
+                hasRotatingPoint: false,
+                lockScalingY: true,
+                lockScalingX: true,
+                selection: true ,
+                isCircle : true
+            });
+            return rectText;
+        }
+    }
+
+
     function drawLineArrow(startX, startY, canvas, o) {
         var line, isDown;
 
@@ -527,11 +708,8 @@ jQuery(document).ready(function($) {
             canvas.renderAll();
             canvas.off('mouse:move');
         });
+
     }
-
-
-
-
 
     //Adds text when clicked
     function addText(startY, startX, currentCanvas) {
@@ -583,7 +761,9 @@ jQuery(document).ready(function($) {
         speechBubbleButton = $('.speech-bubble-button'),
         toolButton = $('.tool-button'),
         selectButton = $('.select-button'),
-        removeButton = $('.remove-button');
+        removeButton = $('.remove-button'),
+        circleArrowButton = $('.circle-left'),
+        fixedCircleButton = $('.fixed-circle-button');
 
     let colorInput = $('.colorInput')
 
@@ -591,9 +771,7 @@ jQuery(document).ready(function($) {
         color = colorInput.val()
         
     })
-
   
-    
 
     function resizeCanvas(canvas) {
         canvas.setWidth(imageToAnnotate.width());
@@ -675,24 +853,73 @@ jQuery(document).ready(function($) {
             $(this).addClass('active');
         });
 
-        $('.download-btn').click(function(){
-            saveCanvasAsImage(fabricCanvas)
+        $('.download-btn').click(function (){
+          $('.download-div').toggleClass('show')
+
+            $('.download-custom').on('click' , function(e){
+                e.preventDefault()
+                saveCanvasAsImage(fabricCanvas , $(this).data('width') , $(this).data('height'))
+            })
+            
         })
+
+        // $('.download-og-btn').click(function(e){
+        //         e.preventDefault()
+        //         saveCanvasAsImage(fabricCanvas)
+        // })
+
+        $('.icon-button').each(function (index){
+            $(this).click( function(){
+                drawIcon(fabricCanvas , index )
+            })
+        })
+
+        // $('#iconButton').on("click" , function(){
+        //     drawIcon(fabricCanvas)
+        // })
         
         // for downloading canvas image
-        function saveCanvasAsImage(canvas) {
-            // let canvas = new fabric.CanvasEx('main-canvas');
-            var url = canvas.toDataURL("image/png");
-            var link = document.createElement("a");
-            link.href = url 
-            link.download = 'image.png'
-            link.click()
+        function saveCanvasAsImage(canvas , width , height ) {
+            
+            const canvasImg = document.getElementById('wpia-preview-image').src
+            console.log('height' , height)
+            let w = (width) ? width : canvas.width
+            let h = (height) ? height : canvas.height
+
+            console.log('h' , h , 'w' , w )
+
+            let ogHeight = canvas.height
+            let ogWidth = canvas.width
+
+            const imgObj = fabric.Image.fromURL( canvasImg , function (img){
+
+                img.set({
+                    top : 0 ,
+                    left : 0 ,
+                    width : canvas.width ,
+                    height : canvas.height                    
+                })
+
+                canvas.add(img)
+                img.sendToBack()
+                
+
+                canvas.setDimensions({ height : h , width : w })
+                var url = canvas.toDataURL("image/png");
+                canvas.setDimensions({ height : ogHeight , width : ogWidth })
+
+                var link = document.createElement("a");
+                link.href = url 
+                link.download = 'image.png'
+                link.click()
+            
+                canvas.setHeight(img.height)
+                canvas.setWidth(img.width)
+                canvas.remove(img)
+                // canvas.renderAll()
+            })
         }  
         
-        $('.circle-left').click(function (){
-            drawCircleWithLeftArrow(fabricCanvas)
-            counter+=1
-        })
 
         $('.circle-right').click(function (){
             drawCircleWithRightArrow(fabricCanvas)
@@ -723,43 +950,52 @@ jQuery(document).ready(function($) {
                 canvas.renderAll();
         })        }
 
-        function drawCircleWithLeftArrow(canvas){
-
-            const svgElement = `  <svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="90" cy="50" r="30" fill="transparent" stroke="${color}" stroke-width="2" />
-            <text x="90" y="55" text-anchor="middle" font-size="18" fill="${color}">${ counter }</text>
-            <line x1="30" y1="50" x2="60" y2="50" stroke="${color}" stroke-width="2" />
-            <polygon points="20,50 30,45 30,55" fill="${color}" />
-          </svg>          
-          `
-
-            fabric.loadSVGFromString(svgElement, function(objects, options) {
-                var img = fabric.util.groupSVGElements(objects, {
-                    left : 100 ,
-                    right : 100 ,
-                    height: 100 ,
-                    width : 100 ,
-                    selectable : true
-                }); 
-
-                
-                canvas.add(img);
-                canvas.setActiveObject(img)
-                canvas.renderAll();
-        })  }
-
         $('.crop-btn').click(function (){
             cropCanvas(fabricCanvas)
         })
 
-        function cropCanvas(canvas){    
+        // img loader 
+        $('.imgLoader').on('input' , function(event){
+            const popup = document.getElementById('popup');
+            const imageToCrop = document.getElementById('imageToCrop');
+            const cropButton = document.getElementById('cropButton');
+
+            const file = event.target.files[0];
+            const reader = new FileReader();
+          
+            reader.onload = (event) => {
+              imageToCrop.src = event.target.result ;
+              popup.style.display = 'block' ;
+          
+              const cropper = new Cropper(imageToCrop, {
+                aspectRatio : 4 / 3 ,
+                viewMode: 1,
+              });
+          
+              cropButton.addEventListener('click', () => {
+                const croppedCanvas = cropper.getCroppedCanvas();
+                const croppedImageUrl = croppedCanvas.toDataURL('image/jpeg');
+
+                const previewImg = document.getElementById('wpia-preview-image')
+                previewImg.src = croppedImageUrl
+
+                imageToAnnotate.height(previewImg.height + 200 )
+                imageToAnnotate.width(previewImg.width + 150 )
+
+                previewImg.setAttribute("draggable" , false )
+                resizeCanvas(fabricCanvas)
+                popup.style.display = 'none';
+              });
+            };
+          
+            reader.readAsDataURL(file);
+            });
+
+        function cropCanvas(canvas){ 
 
             const canvasURL = canvas.toDataURL()
             const img = document.createElement("img")
             img.src = canvasURL
-            
-            
-            
 
             const rect = new fabric.Rect({
                 width : 100 ,
@@ -770,31 +1006,15 @@ jQuery(document).ready(function($) {
 
             canvas.add(rect)
             canvas.renderAll()
-
-
         }
-
-
-
-        // functions for cropping images 
-        // function cropCanvas(canvas){
-        //     const popup = document.getElementById("popup")
-        //     popup.style.display = "block"
-
-        //     const imageToCrop = document.getElementById('popupImg')
-        //     let canvasURL = canvas.toDataURL();
-        //     imageToCrop.src = canvasURL 
-
-        //     const cropper = new Cropper(imageToCrop, {
-        //         // aspectRatio: 16 / 9, 
-        //         viewMode: 1,    
-        //       });
-        // }
 
 
         //Adds the listeners after they are removed
         function addFabricListeners() {
+
             fabricCanvas.on('mouse:down', function (option) {
+                
+                console.log('down')
 
                 if (((typeof option.target != "undefined") && option.target !== null) && !textButton.hasClass('active')) {
                     return;
@@ -802,6 +1022,9 @@ jQuery(document).ready(function($) {
 
                     var startY = option.e.offsetY,
                         startX = option.e.offsetX;
+
+                        console.log("x" , startX)
+                        console.log("y" , startY)       
 
                     if(rectangleButton.hasClass('active')) {
                         drawRectangle(startY, startX, fabricCanvas);
@@ -819,17 +1042,22 @@ jQuery(document).ready(function($) {
                     if(arrowButton.hasClass('active')) {
                         drawLineArrow(startX, startY, fabricCanvas, option)
                     }
-
+                    
                     if(speechBubbleButton.hasClass('active')) {
                         //drawSpeechBubble(fabricCanvas, startX, startY);
                         //ctx,x,y,w,h,radius,px,py
+                    }
+
+                    if(fixedCircleButton.hasClass('active')){
+                        // drawCircle(startX , startY , fabricCanvas)
+                        drawEllipse2(fabricCanvas , option )
                     }
                 }
             });
 
             //Sends objects to the back so that the text is on the front
             fabricCanvas.on('mouse:down', function (option) {
-                if((typeof option.target !== "undefined" && option.target !== null) && (option.target.type === 'rectangle-to-drag')) {
+                if((typeof option.target !== "undefined" && option.target !== null) && ((option.target.type === 'rectangle-to-drag') || (option.target.type === 'traingle-to-drag') )) {
                     return;
                 }
 
@@ -853,17 +1081,21 @@ jQuery(document).ready(function($) {
         fabricCanvas.on('object:moving', function(e) {
             var p = e.target;
 
-            if(((p.type === 'text-standalone' && p.name === 'draggable') || p.type === 'rectangle-to-drag')) {
+            if(((p.type === 'text-standalone' && p.name === 'draggable') || p.type === 'rectangle-to-drag') || p.type === 'traingle-to-drag') {
 
                 if (p.type === 'text-standalone' && p.status !== 'moving') {
+
 
                     removePolygonsWithoutIDs(fabricCanvas);
                     if(typeof p.shape === 'undefined') {
                         p.shape = getItemById(p.id, 'polygon-two', fabricCanvas);
                         fabricCanvas.remove(p.shape);
                     }
+                    
                     fabricCanvas.remove(p.shape);
                     p.rect = getItemById(p.id, 'rectangle-to-drag', fabricCanvas);
+
+                    console.log(p.getCenterPoint())
 
                     var p1 = {x: p.getCenterPoint().x-10, y: p.getCenterPoint().y},
                         p2 = {x: p.getCenterPoint().x+10, y: p.getCenterPoint().y},
@@ -875,6 +1107,7 @@ jQuery(document).ready(function($) {
                     fabricCanvas.add(shape);
                     fabricCanvas.sendToBack(shape);
                     p.shape = shape;
+
                 } else if (p.type === 'rectangle-to-drag') {
 
                     if(typeof group === 'undefined') {
@@ -895,6 +1128,26 @@ jQuery(document).ready(function($) {
                     fabricCanvas.sendToBack(shape);
                     group.shape = shape;
                 }
+                else if(p.type === 'triangle-to-drag'){
+
+                        if(typeof group === 'undefined') {
+                            var group = getItemById(p.id, 'text-standalone', fabricCanvas);
+                        }
+    
+                        fabricCanvas.remove(group.shape);
+    
+                        var p1 = {x: group.getCenterPoint().x-10, y: group.getCenterPoint().y},
+                            p2 = {x: group.getCenterPoint().x+10, y: group.getCenterPoint().y},
+                            p3 = {x: p.getCenterPoint().x, y: p.getCenterPoint().y};
+    
+                        removePolygonsWithoutIDs(fabricCanvas);
+                        var shape = makePolygon(p1, p2, p3, fabricCanvas, p.id);
+    
+    
+                        fabricCanvas.add(shape);
+                        fabricCanvas.sendToBack(shape);
+                        group.shape = shape;
+                }
                 fabricCanvas.renderAll();
             }
         });
@@ -903,6 +1156,11 @@ jQuery(document).ready(function($) {
         speechBubbleButton.on('click', function() {
             drawSpeechBubble(fabricCanvas);
         });
+
+        // adds the circle with arrows 
+        $('.circle-left').on('click' , function (){
+            drawCircleWithArrow(fabricCanvas)
+        })
 
         addFabricListeners();
 

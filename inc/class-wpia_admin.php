@@ -82,8 +82,6 @@ class WPIA_Admin {
         wp_enqueue_script('wpia-admin-fabricex', plugins_url('../admin/js/fabric.canvasex.js', __FILE__), array('wpia-admin-fabric'));
         wp_enqueue_script('wpia-admin-imagesloaded', plugins_url('../lib/imagesLoaded/imagesloaded.pkgd.min.js', __FILE__), array('jquery'));
         wp_enqueue_script('wpia-admin-scripts', plugins_url('../admin/js/script.js', __FILE__), array('jquery','media-upload','thickbox'));
-        
-        
 
 
     }
