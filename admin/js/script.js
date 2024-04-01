@@ -1,4 +1,4 @@
-/**
+/*
  * WP Image Annotator
  * @author Moe Loubani (http://www.moeloubani.com)
  * Contact: moe@loubani.com
@@ -6,8 +6,9 @@
 
 //Adds a polygon with an ID that is used for the speech bubble pointer
 
-let counter = 1 ; 
-let color = "red"
+let itemCounter = 0 ; 
+let color = "red" ;
+
 
 fabric.PolygonTwo = fabric.util.createClass(fabric.Polygon, {
 
@@ -399,11 +400,10 @@ jQuery(document).ready(function($) {
             currentCanvas.renderAll();
             currentCanvas.off('mouse:move');
         });
+
     }
 
     function drawIcon(canvas , index){
-        
-        // canvas.get 
         let top = 0 
         let canvasHeight = canvas.getHeight()
         let canvasWidth = (Math.round(canvas.getWidth() / 8) * 7) - 10 
@@ -414,17 +414,17 @@ jQuery(document).ready(function($) {
         }
         else if(index === 1){
             url = my_plugin_vars.icon2;
-            top = Math.round(canvas.getHeight() / 8) * 0.5 + 40
+            top = Math.round(canvas.getHeight() / 8) * 0.5 + 50
         }
         else if(index === 2){
             url = my_plugin_vars.icon3;
             top = canvasHeight / 3
-            top = Math.round(canvas.getHeight() / 8) * 1 + 80
+            top = Math.round(canvas.getHeight() / 8) * 1 + 100
         }
         else{
             url = my_plugin_vars.icon4;
             top = canvasHeight / 2
-            top = Math.round((canvas.getHeight() / 8) * 1.5 ) + 120
+            top = Math.round((canvas.getHeight() / 8) * 1.5 ) + 150
         }
         console.log(canvasWidth)
         console.log(Math.round((canvasWidth /8 ) * 7) + 40 )
@@ -432,8 +432,8 @@ jQuery(document).ready(function($) {
             img.set({
                 left : canvasWidth ,
                 top : top  ,
-                scaleX : 0.4 ,
-                scaleY : 0.4  
+                scaleX : 0.6 ,
+                scaleY : 0.6  
             })
             canvas.add(img);
             canvas.renderAll()
@@ -472,8 +472,8 @@ jQuery(document).ready(function($) {
         function makeRect(left, top, objectID) {
 
             var block = new fabric.RectangleToDrag({
-                left: left,
-                top: top,
+                left: left ,
+                top: top ,
                 width: 5,
                 height: 5,
                 // fill: 'rgb(127, 140, 141)',
@@ -496,7 +496,7 @@ jQuery(document).ready(function($) {
         function addTextToRect(block, id) {
             // annotator button
             var rectText = new fabric.TextStandalone('Double click rect to edit text', {
-                left: 100, //Take the block's position
+                left: 150, //Take the block's position
                 top: 50,
                 fill: 'black',
                 fontSize: 16,
@@ -646,7 +646,7 @@ jQuery(document).ready(function($) {
 
         function addTextToRect(block, id) {
             // annotator button
-            var rectText = new fabric.TextStandalone(`${++counter}`, {
+            var rectText = new fabric.TextStandalone(`${++itemCounter}`, {
                 left: 100, //Take the block's position
                 top: 50,
                 fill: `${color}`,
@@ -765,11 +765,15 @@ jQuery(document).ready(function($) {
         circleArrowButton = $('.circle-left'),
         fixedCircleButton = $('.fixed-circle-button');
 
+    //li buttons
+    $('.tool-button').each( function(index , item){
+        $(this).addClass('disabled')
+    } ) 
+
     let colorInput = $('.colorInput')
 
     colorInput.on("change" , function(){
         color = colorInput.val()
-        
     })
   
 
@@ -798,14 +802,11 @@ jQuery(document).ready(function($) {
     function storeCanvasToInput(canvas) {
         var annotationData = canvas.toJSON(['lockMovementX', 'lockMovementY', 'lockRotation', 'lockScalingX', 'lockScalingY', 'lockUniScaling', 'hasRotatingPoint']);
         $('#image_annotation_json').val(JSON.stringify(annotationData));
-
         var originalSize = [imageToAnnotate.width(), imageToAnnotate.height()];
         if($('#wpia-original-size').val().length <= 0) {
             $('#wpia-original-size').val(JSON.stringify(originalSize));
         }
-
     }
-
 
     //Only run when images area all loaded in case of slow connections or large images
     $('#canvas-area').imagesLoaded(function() {
@@ -863,10 +864,6 @@ jQuery(document).ready(function($) {
             
         })
 
-        // $('.download-og-btn').click(function(e){
-        //         e.preventDefault()
-        //         saveCanvasAsImage(fabricCanvas)
-        // })
 
         $('.icon-button').each(function (index){
             $(this).click( function(){
@@ -874,9 +871,32 @@ jQuery(document).ready(function($) {
             })
         })
 
-        // $('#iconButton').on("click" , function(){
-        //     drawIcon(fabricCanvas)
-        // })
+        document.addEventListener('paste' , function (e){
+            pasteCopiedImage(fabricCanvas , e) 
+        })
+
+        // Pasting an image from clipboard 
+        function pasteCopiedImage(canvas , e) {
+            console.log('running')
+            let data = e.clipboardData.items        
+            var blob = data[0].getAsFile()
+            let reader = new FileReader()
+    
+            reader.onload = function(e){
+                let img = new Image();
+                img.onload = function(){
+                    var fabricImage = new fabric.Image(img, {
+                        left: 100,
+                        top: 100,
+                        // scaleX: canvas.width / img.width,
+                        // scaleY: canvas.height / img.height
+                      });
+                      canvas.add(fabricImage);
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(blob); 
+        }
         
         // for downloading canvas image
         function saveCanvasAsImage(canvas , width , height ) {
@@ -885,8 +905,6 @@ jQuery(document).ready(function($) {
             console.log('height' , height)
             let w = (width) ? width : canvas.width
             let h = (height) ? height : canvas.height
-
-            console.log('h' , h , 'w' , w )
 
             let ogHeight = canvas.height
             let ogWidth = canvas.width
@@ -908,6 +926,8 @@ jQuery(document).ready(function($) {
                 var url = canvas.toDataURL("image/png");
                 canvas.setDimensions({ height : ogHeight , width : ogWidth })
 
+                navigator.clipboard.writeText('c:/xampp/htdocs/')
+
                 var link = document.createElement("a");
                 link.href = url 
                 link.download = 'image.png'
@@ -923,14 +943,14 @@ jQuery(document).ready(function($) {
 
         $('.circle-right').click(function (){
             drawCircleWithRightArrow(fabricCanvas)
-            counter+=1
+            itemCounter+=1
         })
 
         function drawCircleWithRightArrow(canvas){
 
             const svgElement = `<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
             <circle cx="50" cy="50" r="30" fill="transparent" stroke="${color}" stroke-width="2" />
-            <text x="50" y="55" text-anchor="middle" font-size="18" fill="${color}">${counter}</text>    
+            <text x="50" y="55" text-anchor="middle" font-size="18" fill="${color}">${itemCounter}</text>    
             <line x1="80" y1="50" x2="120" y2="50" stroke="${color}" stroke-width="2" />
             <polygon points="120,50 110,45 110,55" fill="${color}" />
             </svg>`
@@ -959,6 +979,9 @@ jQuery(document).ready(function($) {
             const popup = document.getElementById('popup');
             const imageToCrop = document.getElementById('imageToCrop');
             const cropButton = document.getElementById('cropButton');
+            // insert image div
+            const insertDiv = document.getElementsByClassName('insert-an-image')
+            
 
             const file = event.target.files[0];
             const reader = new FileReader();
@@ -979,12 +1002,21 @@ jQuery(document).ready(function($) {
                 const previewImg = document.getElementById('wpia-preview-image')
                 previewImg.src = croppedImageUrl
 
-                imageToAnnotate.height(previewImg.height + 200 )
-                imageToAnnotate.width(previewImg.width + 150 )
+                imageToAnnotate.height(previewImg.height + 450 )
+                imageToAnnotate.width(previewImg.width + 600 )
+                // 200 150
+                // 400 300
+                // 600 450 
 
                 previewImg.setAttribute("draggable" , false )
                 resizeCanvas(fabricCanvas)
                 popup.style.display = 'none';
+                insertDiv[0].style.display = 'none';
+
+                $('.tool-button').each( function(){
+                    $(this).removeClass('disabled')
+                } ) 
+
               });
             };
           
