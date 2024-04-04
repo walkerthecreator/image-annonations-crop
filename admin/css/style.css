@@ -12,12 +12,9 @@
     font-family: 'clearSansBold',sans-serif;
 }
 
-*{
-  font-family: "Inter", sans-serif !important;
-}
-
 html, body {
-    height: 100%;
+  height: 100%;
+  font-family: "Inter", sans-serif !important;
 }
 
 #container {
@@ -170,11 +167,12 @@ ul.buttons li:hover, ul.buttons:hover {
       display: none ;
     }
 
-    #fileImage{
+    #fileImage , .upload_image_button{
         background-color: #19b394 ;
         color: white ;
         padding: 6px 12px;
         border-radius: 5px ;
+        border: none ;
         /* border: 2px solid ; */
         /* font-weight: bold ; */
         font-size: 14px ;
@@ -182,6 +180,12 @@ ul.buttons li:hover, ul.buttons:hover {
         display: flex ;
         align-items: center;
         gap: 4px;
+    }
+
+    #upload_image_button{
+      background-color: #19b394;
+      color : white ;
+      border: none;
     }
 
     #cropButton{
@@ -202,8 +206,15 @@ ul.buttons li:hover, ul.buttons:hover {
         margin-bottom: 10px ;
     }
 
+    .color-button{
+      position: relative;
+    }
+
     input[type="color"]{
-        border: none ;
+        /* border: none ; */
+        min-width: 30px !important;
+        position:  relative !important;
+        margin-top: 4px;
         appearance: none ;
         -moz-appearance: none;
         -webkit-appearance: none;
@@ -261,10 +272,10 @@ ul.buttons li:hover, ul.buttons:hover {
 
   .show{ display: flex; }
 
-  .disabled{
+  /* .disabled{
     opacity: 0.4 !important;
     cursor: not-allowed !important;
-  }
+  } */
 
   .buttons-side{
     display: flex ;
@@ -377,3 +388,9 @@ ul.buttons li:hover, ul.buttons:hover {
   .upload-bar ul , li{
     margin: 0;
   }
+
+  #loadImage-buttons{
+    display: flex;
+    gap: 10px;
+  }
+

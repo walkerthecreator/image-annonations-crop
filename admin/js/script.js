@@ -796,6 +796,8 @@ jQuery(document).ready(function($) {
             canvas.loadFromJSON(JSON.stringify(currentWIPAObject[0]));
             canvas.renderAll();
         }
+        // canvas.setWidth(800);
+        // canvas.setHeight(600);
     }
 
     //Turns data on the canvas to JSON and stores it in the
@@ -877,7 +879,6 @@ jQuery(document).ready(function($) {
 
         // Pasting an image from clipboard 
         function pasteCopiedImage(canvas , e) {
-            console.log('running')
             let data = e.clipboardData.items        
             var blob = data[0].getAsFile()
             let reader = new FileReader()
@@ -885,13 +886,28 @@ jQuery(document).ready(function($) {
             reader.onload = function(e){
                 let img = new Image();
                 img.onload = function(){
-                    var fabricImage = new fabric.Image(img, {
-                        left: 100,
-                        top: 100,
-                        // scaleX: canvas.width / img.width,
-                        // scaleY: canvas.height / img.height
-                      });
-                      canvas.add(fabricImage);
+
+                    const previewImg = document.getElementById('wpia-preview-image')
+                    previewImg.src = img.currentSrc
+    
+                    imageToAnnotate.height(previewImg.height + 450 )
+                    imageToAnnotate.width(previewImg.width + 600 )
+                    previewImg.setAttribute("draggable" , false )
+                    resizeCanvas(fabricCanvas)
+
+
+
+                    // var fabricImage = new fabric.Image(img, {
+                    //     left: 0 ,
+                    //     top: 0 ,
+                    //     // scaleX: canvas.width ,
+                    //     // scaleY: canvas.height  ,
+                    //     // selectable : false ,
+                    //     // lockMovementX : true ,
+                    //     // lockMovementY : true 
+                    //   })
+                    //   canvas.add(fabricImage);
+                    //     fabricImage.sendToBack()
                 }
                 img.src = e.target.result;
             }
@@ -946,6 +962,10 @@ jQuery(document).ready(function($) {
             itemCounter+=1
         })
 
+        // $('.update_image').on("input" , function (){
+        //     console.log('working')
+        // })
+
         function drawCircleWithRightArrow(canvas){
 
             const svgElement = `<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
@@ -974,13 +994,19 @@ jQuery(document).ready(function($) {
             cropCanvas(fabricCanvas)
         })
 
+        $(document).ready(function(){
+            fabricCanvas.setWidth(800);
+            fabricCanvas.setHeight(600);
+            console.log('loaded')
+        })
+
         // img loader 
         $('.imgLoader').on('input' , function(event){
             const popup = document.getElementById('popup');
             const imageToCrop = document.getElementById('imageToCrop');
             const cropButton = document.getElementById('cropButton');
             // insert image div
-            const insertDiv = document.getElementsByClassName('insert-an-image')
+            // const insertDiv = document.getElementsByClassName('insert-an-image')
             
 
             const file = event.target.files[0];
@@ -1011,7 +1037,7 @@ jQuery(document).ready(function($) {
                 previewImg.setAttribute("draggable" , false )
                 resizeCanvas(fabricCanvas)
                 popup.style.display = 'none';
-                insertDiv[0].style.display = 'none';
+                // insertDiv[0].style.display = 'none'; 
 
                 $('.tool-button').each( function(){
                     $(this).removeClass('disabled')
