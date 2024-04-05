@@ -167,7 +167,7 @@ ul.buttons li:hover, ul.buttons:hover {
       display: none ;
     }
 
-    #fileImage , .upload_image_button{
+    #fileImage , .upload_image_button , #pasteImage{
         background-color: #19b394 ;
         color: white ;
         padding: 6px 12px;
@@ -270,7 +270,8 @@ ul.buttons li:hover, ul.buttons:hover {
     border:2px solid #19b394 ;
   }
 
-  .show{ display: flex; }
+  .show{ display: flex ; }
+  .hide{ display: none !important; }
 
   /* .disabled{
     opacity: 0.4 !important;

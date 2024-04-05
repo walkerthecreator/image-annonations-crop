@@ -121,7 +121,7 @@ fabric.TextStandalone.async = true;
 fabric.RectangleToDrag = fabric.util.createClass(fabric.Rect, {
 
     type: 'rectangle-to-drag',
-
+    
     initialize: function(options) {
         options || ( options = { });
         this.callSuper('initialize', options);
@@ -183,7 +183,6 @@ fabric.LineArrow = fabric.util.createClass(fabric.Line, {
         ctx.closePath();
         ctx.fillStyle = this.stroke;
         ctx.fill();
-
         ctx.restore();
 
     }
@@ -196,6 +195,16 @@ fabric.LineArrow.fromObject = function (object, callback) {
 fabric.LineArrow.async = true;
 
 jQuery(document).ready(function($) {
+
+    // var event = new MouseEvent('click', {
+    //     bubbles: true,
+    //     cancelable: true,
+    //     view: window
+    // });
+    
+    // // Dispatch the event on the canvas element
+    // fabricCanvas.dispatchEvent(event);
+
 
     //In case you want to change the rotation lock just update these variables
     var rotationLocked = true;
@@ -400,7 +409,6 @@ jQuery(document).ready(function($) {
             currentCanvas.renderAll();
             currentCanvas.off('mouse:move');
         });
-
     }
 
     function drawIcon(canvas , index){
@@ -416,7 +424,7 @@ jQuery(document).ready(function($) {
             url = my_plugin_vars.icon2;
             top = Math.round(canvas.getHeight() / 8) * 0.5 + 50
         }
-        else if(index === 2){
+        else if(index === 2){ 
             url = my_plugin_vars.icon3;
             top = canvasHeight / 3
             top = Math.round(canvas.getHeight() / 8) * 1 + 100
@@ -875,7 +883,10 @@ jQuery(document).ready(function($) {
 
         document.addEventListener('paste' , function (e){
             pasteCopiedImage(fabricCanvas , e) 
+            document.getElementById('pasteImage').classList.remove('hide')
         })
+
+
 
         // Pasting an image from clipboard 
         function pasteCopiedImage(canvas , e) {
@@ -886,44 +897,80 @@ jQuery(document).ready(function($) {
             reader.onload = function(e){
                 let img = new Image();
                 img.onload = function(){
-
-                    const previewImg = document.getElementById('wpia-preview-image')
-                    previewImg.src = img.currentSrc
+                    // if screenshot want to be fixed and take canvas size
+                    // const previewImg = document.getElementById('wpia-preview-image')
+                    // previewImg.src = img.currentSrc
     
-                    imageToAnnotate.height(previewImg.height + 450 )
-                    imageToAnnotate.width(previewImg.width + 600 )
-                    previewImg.setAttribute("draggable" , false )
-                    resizeCanvas(fabricCanvas)
+                    // imageToAnnotate.height(previewImg.height)
+                    // imageToAnnotate.width(previewImg.width)
+                    // previewImg.setAttribute("draggable" , false )
+                    // resizeCanvas(fabricCanvas)
+
+                    var fabricImage = new fabric.Image(img, {
+                        left: 0 ,
+                        top: 0 ,
+
+                      })
+                    canvas.add(fabricImage);
+                    fabricImage.sendToBack()
+
+                    $('#pasteImage').on("click" , function (){
+                        let imageToPaste = fabricCanvas.getActiveObject()
+            
+                        console.log(imageToPaste)
+            
+                        let imageWidth = imageToPaste._element.width * imageToPaste.scaleX
+                        let imageHeight = imageToPaste._element.height * imageToPaste.scaleY
+            
+                        const elem = document.getElementById('wpia-preview-image')
+                        elem.src = imageToPaste._element.src
+                        elem.width = imageWidth
+                        elem.height = imageHeight
+                        elem.style.paddingLeft = imageToPaste.left + "px"
+                        elem.style.paddingTop = imageToPaste.top + "px"
+                        console.log(imageToPaste.left)
+                        // elem.style.paddingLeft = '40px'
+                        // console.log()
+                        
+                        fabricCanvas.remove(fabricImage)
+            
+                    })
 
 
 
-                    // var fabricImage = new fabric.Image(img, {
-                    //     left: 0 ,
-                    //     top: 0 ,
-                    //     // scaleX: canvas.width ,
-                    //     // scaleY: canvas.height  ,
-                    //     // selectable : false ,
-                    //     // lockMovementX : true ,
-                    //     // lockMovementY : true 
-                    //   })
-                    //   canvas.add(fabricImage);
-                    //     fabricImage.sendToBack()
                 }
                 img.src = e.target.result;
             }
             reader.readAsDataURL(blob); 
+
         }
         
         // for downloading canvas image
         function saveCanvasAsImage(canvas , width , height ) {
             
+            //canvas image 
             const canvasImg = document.getElementById('wpia-preview-image').src
-            console.log('height' , height)
+
             let w = (width) ? width : canvas.width
+
             let h = (height) ? height : canvas.height
 
             let ogHeight = canvas.height
             let ogWidth = canvas.width
+
+            if(w == 800){
+                const scaleFactor = 0.5; 
+                var newWidth = canvas.width * scaleFactor;
+                var newHeight = canvas.height * scaleFactor + 20 ;
+
+            
+                // Set new dimensions while maintaining aspect ratio
+                // main canvas
+                // canvas.setDimensions({ width: newWidth, height: newHeight });
+            
+                // Render the canvas
+                // canvas.renderAll();
+            }
 
             const imgObj = fabric.Image.fromURL( canvasImg , function (img){
 
@@ -931,28 +978,54 @@ jQuery(document).ready(function($) {
                     top : 0 ,
                     left : 0 ,
                     width : canvas.width ,
-                    height : canvas.height                    
+                    height : canvas.height
                 })
 
                 canvas.add(img)
                 img.sendToBack()
                 
+                // let quality = (w == 800) ? 0.5 : 1                 
+                // console.log('qulaity is', quality)
+                // canvas.setDimensions({ height : h , width : w }  )
+                // var url = canvas.toDataURL("image/jpeg" , quality );
 
-                canvas.setDimensions({ height : h , width : w })
+                // const tempCanvas = document.createElement('canvas')
+                // tempCanvas.setAttribute('id' , 'tempCanvas')
+
+                // const tempImage = new Image()
+                // tempImage.src = canvas.toDataURL() 
+                // const tempCtx = tempCanvas.getContext('2d')
+
+                // tempImage.onload = function(){
+                //     tempCanvas.height = tempImage.height
+                //     tempCanvas.width = tempImage.width
+                //     tempCtx.drawImage(tempImage , 0 , 0 )
+                //     var url = tempCanvas.toDataURL('image/jpeg' , 0.5) ;
+                
+                //     navigator.clipboard.writeText('c:/xampp/htdocs/')
+                    
+                //     var link = document.createElement("a");
+                //     link.href = url 
+                //     link.download = `image-${w}.png`
+                //     link.click()
+                // }
+
                 var url = canvas.toDataURL("image/png");
-                canvas.setDimensions({ height : ogHeight , width : ogWidth })
-
+                // var url = tempCanvas.toDataURL('image/png') ;
+                
                 navigator.clipboard.writeText('c:/xampp/htdocs/')
-
+                
                 var link = document.createElement("a");
                 link.href = url 
-                link.download = 'image.png'
+                link.download = `image-${w}.png`
                 link.click()
-            
+                
                 canvas.setHeight(img.height)
                 canvas.setWidth(img.width)
                 canvas.remove(img)
-                // canvas.renderAll()
+
+                canvas.setDimensions({width : ogWidth ,  height : ogHeight })
+                canvas.renderAll()
             })
         }  
         
@@ -1221,8 +1294,6 @@ jQuery(document).ready(function($) {
         })
 
         addFabricListeners();
-
-
 
         //Upload button functions
         $('#upload_image_button').click(function() {
