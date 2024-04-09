@@ -33,30 +33,31 @@ class WPIA_Metaboxes {
                     <input id="upload_image" type="text" size="36" name="upload_image" value="<?php echo $image; ?>" />
                     <div class="upload_image_button">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hard-drive"><line x1="22" x2="2" y1="12" y2="12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="6" x2="6.01" y1="16" y2="16"/><line x1="10" x2="10.01" y1="16" y2="16"/></svg>
-                        <input id="upload_image_button" type="button" value="<?php _e(' Select Image ', 'image-annotator'); ?>" /> 
+                        <input id="upload_image_button" type="button" value="<?php _e(' Media ', 'image-annotator'); ?>" /> 
                     </div> 
                     <!-- end -->
                      <!-- button with custom crop (nitin) -->
-                    <label for="file" id="fileImage">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image-plus"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                        <span>Select Image from Computer</span> 
-                    </label> 
-                    <label id="pasteImage" class="hide">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-images"><path d="M18 22H4a2 2 0 0 1-2-2V6"/><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18"/><circle cx="12" cy="8" r="2"/><rect width="16" height="16" x="6" y="2" rx="2"/></svg>                       
-                        <span>Set Background</span> 
-                    </label> 
-                </div>
-                <input type="file" id="file" accept="image/*" class="imgLoader">
-                <ul class='buttons'>
+                     <label for="file" id="fileImage">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image-plus"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                         <span>Local</span> 
+                        </label> 
+                        <label id="pasteImage" class="hide">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-images"><path d="M18 22H4a2 2 0 0 1-2-2V6"/><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18"/><circle cx="12" cy="8" r="2"/><rect width="16" height="16" x="6" y="2" rx="2"/></svg>                       
+                            <span>Set Background</span> 
+                        </label> 
+                    </div>
+                    <input type="file" id="file" accept="image/*" class="imgLoader">
+
+                    <ul class='buttons download-ul'>
+                        <input type="text" id='fileNameInput' placeholder="Enter File Name">
                         <li class="download-btn tool-button" data-title="download">
-                            <!-- <i class="fa fa-download" aria-hidden="true"></i>  -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                             <span>Download</span> 
                         </li>
                         <div class="download-div">
-                            <button class="download-custom download-800" data-width="800" data-height="600">Download 800 x 600 </button>
-                            <button class="download-custom download-400" data-width="1600" data-height="1200">Download 1600 x 1200 </button>
-                            <button class="download-custom download-og-btn">Download Original Size</button>
+                            <button class="download-custom download-800" data-width="800" data-height="600">Download Small</button>
+                            <button class="download-custom download-400" data-width="1600" data-height="1200">Download Medium </button>
+                            <button class="download-custom download-og-btn">Download Large</button>
                         </div>
                 </ul> 
             </div>

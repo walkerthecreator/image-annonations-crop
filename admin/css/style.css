@@ -81,7 +81,7 @@ ul.buttons li:hover, ul.buttons:hover {
 
 #main-canvas, #canvas-area {
     width: 100%;
-    background: transparent;
+    background: transparent ;
     position: relative;
     /* border : 2px solid ; */
 }
@@ -249,9 +249,10 @@ ul.buttons li:hover, ul.buttons:hover {
     display: none ;
     flex-wrap: wrap;
     z-index: 999 ;
-    left: 150px;
+    right: -230px !important;
     top : 0;
   }
+
   
   .download-div button{
     width: 100% ;
@@ -394,4 +395,19 @@ ul.buttons li:hover, ul.buttons:hover {
     display: flex;
     gap: 10px;
   }
+
+canvas{
+  border: 1px solid rgb(203, 203, 203) !important;
+}
+
+#fileNameInput{
+  padding: 6px 8px ;
+  border : none ;
+  border-radius: 5px ;
+  font-size: 14px ;
+  font-weight: 500;
+  min-width: 100px ;
+  height: 12px !important;
+  outline: 2px solid #19b394;
+}
 

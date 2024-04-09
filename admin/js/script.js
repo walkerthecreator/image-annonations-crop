@@ -9,7 +9,6 @@
 let itemCounter = 0 ; 
 let color = "red" ;
 
-
 fabric.PolygonTwo = fabric.util.createClass(fabric.Polygon, {
 
     type: 'polygon-two',
@@ -909,44 +908,146 @@ jQuery(document).ready(function($) {
                     var fabricImage = new fabric.Image(img, {
                         left: 0 ,
                         top: 0 ,
-
+                        // height : 300 * 0.6 ,
+                        // width : 400 * 0.6 
                       })
-                    canvas.add(fabricImage);
-                    fabricImage.sendToBack()
 
-                    $('#pasteImage').on("click" , function (){
-                        let imageToPaste = fabricCanvas.getActiveObject()
-            
-                        console.log(imageToPaste)
-            
-                        let imageWidth = imageToPaste._element.width * imageToPaste.scaleX
-                        let imageHeight = imageToPaste._element.height * imageToPaste.scaleY
-            
-                        const elem = document.getElementById('wpia-preview-image')
-                        elem.src = imageToPaste._element.src
-                        elem.width = imageWidth
-                        elem.height = imageHeight
-                        elem.style.paddingLeft = imageToPaste.left + "px"
-                        elem.style.paddingTop = imageToPaste.top + "px"
-                        console.log(imageToPaste.left)
-                        // elem.style.paddingLeft = '40px'
-                        // console.log()
-                        
+                      let prev = fabricImage.width
+                      
+                      if(fabricImage.width > 1600 || fabricImage.height > 1200 ){
+                        fabricImage.set({
+                            width : fabricImage.width * 0.35 , 
+                            height : fabricImage.height * 0.35
+                        })
+                      }
+                      else if(fabricImage.width > 800 || fabricImage.height > 600 ){
+                        fabricImage.set({
+                            width : fabricImage.width * 0.5 , 
+                            height : fabricImage.height * 0.5
+                        })
+                      }
+
+                      console.log("pehle" , fabricImage.width)
+                      
+                      console.log("prev" , prev , "latest" , fabricImage.width)
+                      
+                      canvas.add(fabricImage);
+                      canvas.setActiveObject(fabricImage)
+                      
+                      fabricImage.sendToBack()
+                      
+                      $('#pasteImage').on("click" , function (){
+                          let imageToPaste = fabricCanvas.getActiveObject()
+
+                          console.log(imageToPaste)
+                          
+                          // let imageWidth = imageToPaste._element.width * imageToPaste.scaleX
+                          // let imageHeight = imageToPaste._element.height * imageToPaste.scaleY
+
+                          let imageWidth = fabricImage.width
+                          let imageHeight = fabricImage.height 
+                          
+                          const elem = document.getElementById('wpia-preview-image')
+                          elem.src = imageToPaste._element.src
+                          elem.width = imageWidth
+                          elem.height = imageHeight
+                          elem.style.paddingLeft = imageToPaste.left + "px"
+                          elem.style.paddingTop = imageToPaste.top + "px"
+                          document.getElementById('pasteImage').classList.add('hide')
+                          console.log("baadme" , imageWidth)
+                          
                         fabricCanvas.remove(fabricImage)
-            
                     })
-
-
-
                 }
                 img.src = e.target.result;
             }
             reader.readAsDataURL(blob); 
 
         }
+
+        function saveCanvasAsImage(canvas , width , height){
+            const canvasImg = document.getElementById('wpia-preview-image')
+
+            const tempCanvas = document.createElement('canvas')
+            tempCanvas.setAttribute('id' , "tempCanvas")
+            tempCanvas.width = 800
+            tempCanvas.height = 600
+
+            
+            document.body.appendChild(tempCanvas)
+
+            const downloadingCanvas = new fabric.Canvas('tempCanvas')
+
+
+            let backgroundImagePadding = Number(canvasImg.style.paddingLeft.slice(0 , -2))
+            let backgroundImageTopPadding = Number(canvasImg.style.paddingTop.slice(0 , -2))
+
+            console.log('check kar raha hun' , backgroundImagePadding , backgroundImageTopPadding )
+
+            const downloadingImage = new fabric.Image(canvasImg , {
+                top : (( backgroundImageTopPadding ) ? backgroundImageTopPadding : 0) ,
+                left : (( backgroundImagePadding ) ?  backgroundImagePadding  : 0) ,
+                // top : 100 ,
+                // left : 100 ,
+                width : canvasImg.width ,
+                height : canvasImg.height ,
+            })
+            
+
+            downloadingCanvas.add(downloadingImage)
+            downloadingImage.sendToBack()
+            
+            const rect = new fabric.Rect({
+                left : 0 ,
+                top : 0  ,
+                width : canvas.width ,
+                height : canvas.height ,
+                fill : 'white'
+            })
+            downloadingCanvas.add(rect)
+
+            rect.sendToBack()
+
+            // drawings url 
+            const imgURL = canvas.toDataURL('image/png' , 1)
+
+            // converting drawing into img 
+            const newImg = new fabric.Image.fromURL(imgURL , function (img){
+
+                img.set({
+                    width : canvas.width ,
+                    height : canvas.height , 
+                    top : 0 ,
+                    left : 0 
+                })
+
+                downloadingCanvas.add(img)
+                img.bringToFront()
+
+                var url = tempCanvas.toDataURL("image/jpeg" , 1)
+                
+                navigator.clipboard.writeText('c:/xampp/htdocs/')
+                
+                var link = document.createElement("a");
+                link.href = url 
+                console.log('a ka link' , url)
+
+                // read filename from input
+                let fileName = document.getElementById('fileNameInput').value 
+
+                link.download = `${ fileName ? fileName : "image-annonation"}.jpeg`
+                link.click()
+
+                downloadingCanvas.clear()
+                const elem = document.getElementById('tempCanvas')
+                elem.remove()
+                // downloadingCanvas.remove()
+            })
+
+        }
         
         // for downloading canvas image
-        function saveCanvasAsImage(canvas , width , height ) {
+        function saveCanvasAsImage1(canvas , width , height ) {
             
             //canvas image 
             const canvasImg = document.getElementById('wpia-preview-image').src
