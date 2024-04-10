@@ -149,7 +149,7 @@ ul.buttons li:hover, ul.buttons:hover {
     font-weight: 600 ; */
   }
 
-  .download-btn{
+  .download-btn , .save-btn{
     background-color: #19b394 !important;
     color: white !important;
     min-width: 100px !important;

@@ -870,7 +870,10 @@ jQuery(document).ready(function($) {
                 e.preventDefault()
                 saveCanvasAsImage(fabricCanvas , $(this).data('width') , $(this).data('height'))
             })
-            
+        })
+
+        $('.save-btn').click(function (){
+            saveImageToWordpress(fabricCanvas)
         })
 
 
@@ -962,7 +965,115 @@ jQuery(document).ready(function($) {
                 img.src = e.target.result;
             }
             reader.readAsDataURL(blob); 
+        }
 
+        function dataURItoBlob(dataURI) {
+            // convert base64 to raw binary data held in a string
+            var byteString;
+            if (dataURI.split(',')[0].indexOf('base64') >= 0)
+                byteString = atob(dataURI.split(',')[1]);
+            else
+                byteString = unescape(dataURI.split(',')[1]);
+        
+            // separate out the mime component
+            var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        
+            // write the bytes of the string to an ArrayBuffer
+            var arrayBuffer = new ArrayBuffer(byteString.length);
+            var ia = new Uint8Array(arrayBuffer);
+            for (var i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+        
+            return new Blob([arrayBuffer], {type:mimeString});
+        }
+
+        function saveImageToWordpress(canvas){
+            const canvasImg = document.getElementById('wpia-preview-image')
+
+            const tempCanvas = document.createElement('canvas')
+            tempCanvas.setAttribute('id' , "tempCanvas")
+            tempCanvas.width = 800
+            tempCanvas.height = 600
+            
+            document.body.appendChild(tempCanvas)
+            const downloadingCanvas = new fabric.Canvas('tempCanvas')
+
+            let backgroundImagePadding = Number(canvasImg.style.paddingLeft.slice(0 , -2))
+            let backgroundImageTopPadding = Number(canvasImg.style.paddingTop.slice(0 , -2))
+
+            const downloadingImage = new fabric.Image(canvasImg , {
+                top : (( backgroundImageTopPadding ) ? backgroundImageTopPadding : 0) ,
+                left : (( backgroundImagePadding ) ?  backgroundImagePadding  : 0) ,
+                width : canvasImg.width ,
+                height : canvasImg.height ,
+            })
+
+            downloadingCanvas.add(downloadingImage)
+            downloadingImage.sendToBack()
+            
+            const rect = new fabric.Rect({
+                left : 0 ,
+                top : 0  ,
+                width : canvas.width ,
+                height : canvas.height ,
+                fill : 'white'
+            })
+            downloadingCanvas.add(rect)
+
+            rect.sendToBack()
+
+            // drawings url 
+            const imgURL = canvas.toDataURL('image/png' , 1)
+
+            // converting drawing into img 
+            const newImg = new fabric.Image.fromURL(imgURL , function (img){
+
+                img.set({
+                    width : canvas.width ,
+                    height : canvas.height , 
+                    top : 0 ,
+                    left : 0 
+                })
+
+                downloadingCanvas.add(img)
+                img.bringToFront()
+
+                let url = tempCanvas.toDataURL("image/jpeg" , 1)
+                
+                const formData = new FormData()
+
+
+                // Convert base64 string to Blob
+                var blob = dataURItoBlob(url);
+
+                // Append blob to FormData
+                formData.append('canvasImage', blob, 'canvas_image.png');
+
+                // Use jQuery AJAX to upload
+                $.ajax({
+                    url: 'http://localhost/wordpress/wp-admin/admin.php?page=imgedit-plugin', // Assuming ajaxurl is properly defined in your WordPress environment
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        console.log('Image uploaded successfully');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error uploading image:', error);
+                    }
+                });
+                
+
+
+                // navigator.clipboard.writeText('c:/xampp/htdocs/')
+                
+                // var link = document.createElement("a");
+                // link.href = url 
+                // console.log('wordpress ka link' , link)
+                // save image to wordpress 
+            })            
         }
 
         function saveCanvasAsImage(canvas , width , height){
