@@ -1019,8 +1019,8 @@ jQuery(document).ready(function($) {
                 height : canvas.height ,
                 fill : 'white'
             })
-            downloadingCanvas.add(rect)
 
+            downloadingCanvas.add(rect)
             rect.sendToBack()
 
             // drawings url 
@@ -1152,6 +1152,11 @@ jQuery(document).ready(function($) {
                 downloadingCanvas.clear()
                 const elem = document.getElementById('tempCanvas')
                 elem.remove()
+
+                let elems = document.getElementsByClassName('canvas-container')
+                for(let i = 1 ; i <elems.length ; i++){
+                    elems[i].remove()
+                }
                 // downloadingCanvas.remove()
             })
 
@@ -1310,17 +1315,54 @@ jQuery(document).ready(function($) {
                 const croppedCanvas = cropper.getCroppedCanvas();
                 const croppedImageUrl = croppedCanvas.toDataURL('image/jpeg');
 
-                const previewImg = document.getElementById('wpia-preview-image')
-                previewImg.src = croppedImageUrl
+                // testing paste functionality
 
-                imageToAnnotate.height(previewImg.height + 450 )
-                imageToAnnotate.width(previewImg.width + 600 )
+                const croppedImage = fabric.Image.fromURL(croppedImageUrl , function (img){
+                    img.set({
+                        top : 100  ,
+                        left : 100 ,
+                    })
+                    fabricCanvas.add(img)
+                    fabricCanvas.setActiveObject(img)
+
+                    $('#pasteImage').removeClass('hide')
+
+                    $('#pasteImage').on("click" , function (){
+                        let imageToPaste = fabricCanvas.getActiveObject()
+
+                        console.log("image ki prop", imageToPaste)
+                        
+                        // let imageWidth = imageToPaste._element.width * imageToPaste.scaleX
+                        // let imageHeight = imageToPaste._element.height * imageToPaste.scaleY
+
+                        let imageWidth = img.width * imageToPaste.scaleX
+                        let imageHeight = img.height  * imageToPaste.scaleY
+                        
+                        const elem = document.getElementById('wpia-preview-image')
+                        elem.src = imageToPaste._element.src
+                        elem.width = imageWidth
+                        elem.height = imageHeight
+                        elem.style.paddingLeft = imageToPaste.left + "px"
+                        elem.style.paddingTop = imageToPaste.top + "px"
+                        document.getElementById('pasteImage').classList.add('hide')
+                        console.log("baadme" , imageWidth)
+                        
+                        fabricCanvas.remove(img)
+                  })
+                })
+                // end
+
+                // const previewImg = document.getElementById('wpia-preview-image')
+                // previewImg.src = croppedImageUrl
+
+                // imageToAnnotate.height(previewImg.height + 450 )
+                // imageToAnnotate.width(previewImg.width + 600 )
                 // 200 150
                 // 400 300
                 // 600 450 
 
-                previewImg.setAttribute("draggable" , false )
-                resizeCanvas(fabricCanvas)
+                // previewImg.setAttribute("draggable" , false )
+                // resizeCanvas(fabricCanvas)
                 popup.style.display = 'none';
                 // insertDiv[0].style.display = 'none'; 
 

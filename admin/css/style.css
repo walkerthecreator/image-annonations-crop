@@ -420,6 +420,7 @@ ul.buttons li:hover, ul.buttons:hover {
 
 canvas{
   border: 1px solid rgb(203, 203, 203) !important;
+  overflow: hidden ;
 }
 
 #ia-fileNameInput{
