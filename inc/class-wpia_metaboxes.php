@@ -27,12 +27,12 @@ class WPIA_Metaboxes {
         ?>
 
         <div id="upload-area">
-            <div class="upload-fields upload-bar">
+            <div class="upload-fields ia-upload-bar">
                 <div id="loadImage-buttons">
                     <!-- button with builtin crop  -->
                     <input id="upload_image" type="text" size="36" name="upload_image" value="<?php echo $image; ?>" />
-                    <div class="upload_image_button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hard-drive"><line x1="22" x2="2" y1="12" y2="12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="6" x2="6.01" y1="16" y2="16"/><line x1="10" x2="10.01" y1="16" y2="16"/></svg>
+                    <div class="ia-upload_image_button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hard-drive"><line x1="22" x2="2" y1="12" y2="12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="6" x2="6.01" y1="16" y2="16"/><line x1="10" x2="10.01" y1="16" y2="16"/></svg>
                         <input id="upload_image_button" type="button" value="<?php _e(' Media ', 'image-annotator'); ?>" /> 
                     </div> 
                     <!-- end -->
@@ -48,13 +48,13 @@ class WPIA_Metaboxes {
                     </div>
                     <input type="file" id="file" accept="image/*" class="imgLoader">
 
-                    <ul class='buttons download-ul'>
-                        <input type="text" id='fileNameInput' placeholder="Enter File Name">
-                        <li id="save" class="save-btn tool-button">
+                    <ul class='ia-download-ul'>
+                        <input type="text" id='ia-fileNameInput' placeholder="Enter File Name">
+                        <li id="save" class="save-btn">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                             <span>Save</span>
                         </li>
-                        <li class="download-btn tool-button" data-title="download">
+                        <li class="download-btn" data-title="download">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                             <span>Download</span> 
                         </li>

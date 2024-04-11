@@ -1144,7 +1144,7 @@ jQuery(document).ready(function($) {
                 console.log('a ka link' , url)
 
                 // read filename from input
-                let fileName = document.getElementById('fileNameInput').value 
+                let fileName = document.getElementById('ia-fileNameInput').value 
 
                 link.download = `${ fileName ? fileName : "image-annonation"}.jpeg`
                 link.click()

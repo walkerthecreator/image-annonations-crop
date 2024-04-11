@@ -46,6 +46,19 @@ ul.buttons {
     /* flex-direction: column; */
 }
 
+.ia-download-ul{
+  list-style: none;
+  margin: 0 0 10px 0;
+  padding: 0;
+  display: flex ;
+  align-items: center ;
+  gap: 6px;
+}
+
+.ia-download-ul > li:hover {
+  cursor: pointer;
+}
+
 ul.buttons li {
     /* display: inline-block; */
     color: #909090;
@@ -167,7 +180,7 @@ ul.buttons li:hover, ul.buttons:hover {
       display: none ;
     }
 
-    #fileImage , .upload_image_button , #pasteImage{
+    #fileImage , .ia-upload_image_button , #pasteImage{
         background-color: #19b394 ;
         color: white ;
         padding: 6px 12px;
@@ -178,14 +191,12 @@ ul.buttons li:hover, ul.buttons:hover {
         font-size: 14px ;
         min-width: 100px ;
         display: flex ;
+        justify-content: center;
         align-items: center;
-        gap: 4px;
-    }
-
-    #upload_image_button{
-      background-color: #19b394;
-      color : white ;
-      border: none;
+      }
+      
+      #fileImage{
+      gap: 8px;
     }
 
     #cropButton{
@@ -380,7 +391,7 @@ ul.buttons li:hover, ul.buttons:hover {
     margin-top: 10px;
   }
 
-  .upload-bar{
+  .ia-upload-bar{
     display: flex ;
     width: 100%;
     justify-content: space-between;
@@ -400,7 +411,7 @@ canvas{
   border: 1px solid rgb(203, 203, 203) !important;
 }
 
-#fileNameInput{
+#ia-fileNameInput{
   padding: 6px 8px ;
   border : none ;
   border-radius: 5px ;
