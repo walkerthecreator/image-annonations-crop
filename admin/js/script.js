@@ -947,8 +947,8 @@ jQuery(document).ready(function($) {
                           // let imageWidth = imageToPaste._element.width * imageToPaste.scaleX
                           // let imageHeight = imageToPaste._element.height * imageToPaste.scaleY
 
-                          let imageWidth = fabricImage.width
-                          let imageHeight = fabricImage.height 
+                          let imageWidth = fabricImage.width * imageToPaste.scaleX
+                          let imageHeight = fabricImage.height * imageToPaste.scaleY
                           
                           const elem = document.getElementById('wpia-preview-image')
                           elem.src = imageToPaste._element.src
@@ -1252,6 +1252,12 @@ jQuery(document).ready(function($) {
             itemCounter+=1
         })
 
+            $('#clearBtn').click(function(){
+                fabricCanvas.clear()
+                // document.getElementById('wpia-preview-image').removeAttribute("src")
+                document.getElementById('wpia-preview-image').setAttribute("src" , "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")
+            })
+
         // $('.update_image').on("input" , function (){
         //     console.log('working')
         // })
@@ -1322,6 +1328,14 @@ jQuery(document).ready(function($) {
                         top : 100  ,
                         left : 100 ,
                     })
+
+                    if(img.width > 800){
+                        img.set({
+                            width : 400 ,
+                            height : 300
+                        })
+                    }
+
                     fabricCanvas.add(img)
                     fabricCanvas.setActiveObject(img)
 
@@ -1334,7 +1348,7 @@ jQuery(document).ready(function($) {
                         
                         // let imageWidth = imageToPaste._element.width * imageToPaste.scaleX
                         // let imageHeight = imageToPaste._element.height * imageToPaste.scaleY
-
+                        console.log('error' , imageToPaste.scaleX )
                         let imageWidth = img.width * imageToPaste.scaleX
                         let imageHeight = img.height  * imageToPaste.scaleY
                         

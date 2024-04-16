@@ -30,21 +30,26 @@ class WPIA_Metaboxes {
             <div class="upload-fields ia-upload-bar">
                 <div id="loadImage-buttons">
                     <!-- button with builtin crop  -->
+<!--                     
                     <input id="upload_image" type="text" size="36" name="upload_image" value="<?php echo $image; ?>" />
                     <div class="ia-upload_image_button" id="ia-upload-image-button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hard-drive"><line x1="22" x2="2" y1="12" y2="12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="6" x2="6.01" y1="16" y2="16"/><line x1="10" x2="10.01" y1="16" y2="16"/></svg>
                         <input id="upload_image_button" type="button" value="<?php _e(' Media ', 'image-annotator'); ?>" /> 
-                    </div> 
+                    </div>  -->
+
                     <!-- end -->
                      <!-- button with custom crop (nitin) -->
-                     <label for="file" id="fileImage">
+                     <label for="file" id="fileImage" class="ia-btn-primary">
                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image-plus"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/><line x1="16" x2="22" y1="5" y2="5"/><line x1="19" x2="19" y1="2" y2="8"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                         <span>Local</span> 
+                         <span>Load Image</span> 
                      </label> 
-                        <label id="pasteImage" class="hide">
+                        <label id="pasteImage" class="hide ia-btn-primary">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-images"><path d="M18 22H4a2 2 0 0 1-2-2V6"/><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18"/><circle cx="12" cy="8" r="2"/><rect width="16" height="16" x="6" y="2" rx="2"/></svg>                       
                             <span>Set Background</span> 
                         </label> 
+                        <label id="clearBtn" class="ia-btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eraser"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>                        <span>Clear Canvas</span>
+                        </label>
                     </div>
                     <input type="file" id="file" accept="image/*" class="imgLoader">
 
